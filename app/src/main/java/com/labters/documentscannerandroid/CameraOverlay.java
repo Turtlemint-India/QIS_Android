@@ -42,6 +42,7 @@ public class CameraOverlay extends SurfaceView implements SurfaceHolder.Callback
     SurfaceHolder holder;
     ImageView rectangle;
     RelativeLayout relativeLayout;
+    private SurfaceView cameraSurfaceView = null;
 
     public CameraOverlay(Context context, Camera camera) {
         super(context);
@@ -76,6 +77,30 @@ public class CameraOverlay extends SurfaceView implements SurfaceHolder.Callback
 
         relativeLayout = findViewById(R.id.containerImg);
 
+        cameraSurfaceView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setCamFocusMode();
+            }
+        });
+
+    }
+
+    private void setCamFocusMode(){
+
+        if(camera == null) {
+            return;
+        }
+        /* Set Auto focus */
+        Camera.Parameters parameters = camera.getParameters();
+        List<String>    focusModes = parameters.getSupportedFocusModes();
+        if(focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else
+        if(focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
+        camera.setParameters(parameters);
     }
 
     @Override
