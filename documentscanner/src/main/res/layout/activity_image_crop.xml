@@ -68,6 +68,14 @@
                     android:foreground="?attr/actionModeSelectAllDrawable"
                     android:padding="5dp"
                     android:src="@drawable/ic_invert_colors" />
+            <ImageView
+                    android:id="@+id/ivsharp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:foreground="?attr/actionModeSelectAllDrawable"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_invert_colors" />
         </LinearLayout>
         <FrameLayout
                 android:id="@+id/frameLayout"

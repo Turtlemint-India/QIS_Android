@@ -37,6 +37,13 @@ import com.labters.documentscanner.base.DocumentScanActivity;
 import com.labters.documentscanner.helpers.ScannerConstants;
 import com.labters.documentscanner.libraries.PolygonView;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -53,7 +60,7 @@ public class ImageCropActivity extends DocumentScanActivity {
     private FrameLayout holderImageCrop;
     private ImageView imageView;
     private PolygonView polygonView;
-    private boolean isInverted, isMagic;
+    private boolean isInverted, isMagic, isSharp;
     private ProgressBar progressBar;
     private Bitmap cropImage;
 
@@ -85,6 +92,8 @@ public class ImageCropActivity extends DocumentScanActivity {
     private OnClickListener btnRebase = v -> {
         cropImage = ScannerConstants.selectedImageBitmap.copy(ScannerConstants.selectedImageBitmap.getConfig(), true);
         isInverted = false;
+        isMagic = false;
+        isSharp = false;
         startCropping();
     };
     private OnClickListener btnCloseClick = v -> finish();
@@ -133,27 +142,67 @@ public class ImageCropActivity extends DocumentScanActivity {
 
     private void magicColor() {
         if(!isMagic){
-        Bitmap bmpMonochrome = Bitmap.createBitmap(cropImage.getWidth(), cropImage.getHeight(), Bitmap.Config.ARGB_8888);
-        float[] colorTransform = {
-                85, 85, 85, 0, -128*255,
-                85, 85, 85, 0, -128*255,
-                85, 85, 85, 0, -128*255,
-                0, 0, 0, 1, 0};
+            Bitmap bmpMonochrome = Bitmap.createBitmap(cropImage.getWidth(), cropImage.getHeight(), Bitmap.Config.ARGB_8888);
+            float[] colorTransform = {
+                    85, 85, 85, 0, -128*255,
+                    85, 85, 85, 0, -128*255,
+                    85, 85, 85, 0, -128*255,
+                    0, 0, 0, 1, 0};
 
-        Canvas canvas = new Canvas(bmpMonochrome);
-        ColorMatrix ma = new ColorMatrix();
-        ma.setSaturation(0f); //Remove Colour
-        ma.set(colorTransform); //Apply the Red
-        Paint paint = new Paint();
-        paint.setColorFilter(new ColorMatrixColorFilter(ma));
+            Canvas canvas = new Canvas(bmpMonochrome);
+            ColorMatrix ma = new ColorMatrix();
+            ma.setSaturation(0f); //Remove Colour
+            ma.set(colorTransform); //Apply the Red
+            Paint paint = new Paint();
+            paint.setColorFilter(new ColorMatrixColorFilter(ma));
 
-        canvas.drawBitmap(cropImage, 0, 0, paint);
-        cropImage = bmpMonochrome.copy(bmpMonochrome.getConfig(), true);
-    } else {
-        cropImage = cropImage.copy(cropImage.getConfig(), true);
+            canvas.drawBitmap(cropImage, 0, 0, paint);
+            cropImage = bmpMonochrome.copy(bmpMonochrome.getConfig(), true);
+        } else {
+            cropImage = cropImage.copy(cropImage.getConfig(), true);
+        }
+        isMagic = !isMagic;
     }
-    isMagic = !isMagic;
+
+    private OnClickListener btnSharp = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showProgressBar();
+            disposable.add(
+                    Observable.fromCallable(() -> {
+                        sharpen();
+                        return false;
+                    })
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe((result) -> {
+                                hideProgressBar();
+                                Bitmap scaledBitmap = scaledBitmap(cropImage, holderImageCrop.getWidth(), holderImageCrop.getHeight());
+                                imageView.setImageBitmap(scaledBitmap);
+                            })
+            );
+        }
+    };
+
+    private void sharpen() {
+        if (!isSharp) {
+            try {
+                Bitmap bmpMonochrome = Bitmap.createBitmap(cropImage.getWidth(), cropImage.getHeight(), Bitmap.Config.ARGB_8888);
+                Mat source = new Mat();
+                Utils.bitmapToMat(bmpMonochrome, source);
+                Mat destination = new Mat(source.rows(), source.cols(), source.type());
+
+                // filtering
+                Imgproc.GaussianBlur(source, destination, new Size(0, 0), 10);
+                Core.addWeighted(source, 1.5, destination, -0.5, 0, destination);
+                Utils.bitmapToMat(bmpMonochrome, destination);
+ //               cropImage = bmpMonochrome.copy(bmpMonochrome.getConfig(), true);
+                isSharp = !isSharp;
+            } catch (Exception e) {
+            }
+        }
     }
+
 
     private OnClickListener onRotateClick = new OnClickListener() {
         @Override
@@ -183,6 +232,7 @@ public class ImageCropActivity extends DocumentScanActivity {
         cropImage = ScannerConstants.selectedImageBitmap;
         isInverted = false;
         isMagic = false;
+        isSharp = false;
         if (ScannerConstants.selectedImageBitmap != null)
             initView();
         else {
@@ -243,32 +293,6 @@ public class ImageCropActivity extends DocumentScanActivity {
         }
     }
 
-    private void SaveImage(Bitmap finalBitmap) {
-
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File myDir = new File(root + "/Pictures/");
-        if (!myDir.exists()) {
-            myDir.mkdirs();
-        }
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "doc-"+ n +".jpg";
-        File file = new File (myDir, fname);
-        if (file.exists ())
-            file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void initView() {
         Button btnImageCrop = findViewById(R.id.btnImageCrop);
         Button btnClose = findViewById(R.id.btnClose);
@@ -278,6 +302,7 @@ public class ImageCropActivity extends DocumentScanActivity {
         ImageView ivInvert = findViewById(R.id.ivInvert);
         ImageView ivRebase = findViewById(R.id.ivRebase);
         ImageView ivMagicColor = findViewById(R.id.ivmagic);
+        ImageView ivSharpen = findViewById(R.id.ivsharp);
         btnImageCrop.setText(ScannerConstants.cropText);
         btnClose.setText(ScannerConstants.backText);
         polygonView = findViewById(R.id.polygonView);
@@ -294,6 +319,7 @@ public class ImageCropActivity extends DocumentScanActivity {
         ivInvert.setOnClickListener(btnInvertColor);
         ivRebase.setOnClickListener(btnRebase);
         ivMagicColor.setOnClickListener(btnMagicColor);
+        ivSharpen.setOnClickListener(btnSharp);
         startCropping();
     }
 
