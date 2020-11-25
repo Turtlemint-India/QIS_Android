@@ -169,27 +169,6 @@ class MainActivity : AppCompatActivity() {
                     Custom_CameraActivity::class.java
                 ) //MediaStore.ACTION_IMAGE_CAPTURE is used to bring default camera
                 startActivityForResult(cameraIntent, 1234)
-                /*
-                if (cameraIntent != null) {
-                    if (cameraIntent.resolveActivity(packageManager) != null) {
-
-                        var photoFile: File? = null
-                        try {
-                            photoFile = createImageFile()
-                        } catch (ex: IOException) {
-                            Log.i("Main", "IOException")
-                        }
-                        if (photoFile != null) {
-                            val builder = StrictMode.VmPolicy.Builder()
-                            StrictMode.setVmPolicy(builder.build())
-                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
-                            startActivityForResult(cameraIntent, 1231)
-                        }
-                    }
-                }
-
-                 */
-
             }
             builder.setNeutralButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
@@ -199,26 +178,4 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
-
-    @SuppressLint("SimpleDateFormat")
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        val storageDir = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES
-        )
-        val image = File.createTempFile(
-            imageFileName, // prefix
-            ".jpg", // suffix
-            storageDir      // directory
-        )
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.absolutePath
-        return image
-    }
-
-
 }
