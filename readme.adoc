@@ -1,16 +1,14 @@
-# Android Document Scanner Library
+# Turtle Scanner
 
 image::https://img.shields.io/badge/version-1.5.3-green.svg[]
 image::https://img.shields.io/badge/minSDK-19-blue.svg[]
 image::https://img.shields.io/badge/license-MIT-yellowgreen.svg[]
 
-This library helps you to scan any document like CamScanner.
-
-image::documentscannerMockup.png[]
-
+This Android application is used to Scan documents and then classify Policies.
+# The License and the library used in this application belongs to https://github.com/mayuce/AndroidDocumentScanner .
 ## Requirements
 
-You need to implement openCV to run this library via import module on Android Studio. Use OpenCV library on this repository.
+You need to implement openCV to run this application via import module on Android Studio. Use OpenCV library on this repository.
 Follow the lines below:
 
 * File -> New -> Import Module
@@ -68,8 +66,8 @@ if (requestCode==Constants.REQUEST_CROP && resultCode== Activity.RESULT_OK )
 
 ### Additional Features
 
-On above Android 9.0 there is magnifier to help user to see zoomed image to crop.
-
+#### Magic Filter
+#### Sharpening of Image
 #### Customizing ImageCropActivity
 
 You can customize something in layout via ScannerConstants.
@@ -187,10 +185,6 @@ You still can use old customization via ScannerConstants or you can create a new
 And *after* setting your view call *startCropping()* method
 
 If you have a trouble you can follow follow com.labters.documentscanner.ImageCropActivity for how to do that.
-
-## TO-DO
-
-- Remove RxJava dependency.
 
 ## Thanks
 
