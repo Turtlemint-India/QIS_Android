@@ -64,6 +64,22 @@ public class CameraOverlay extends SurfaceView implements SurfaceHolder.Callback
             params.setRotation(0);
         }
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        //best quality images ( currently in my phone 3000x4000 resolution )
+
+        /* Usable Parameters
+        params = mCamera.getParameters();
+        params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        params.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+        params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
+        params.setExposureCompensation(0);
+        params.setPictureFormat(ImageFormat.JPEG);
+        params.setJpegQuality(100);
+        params.setRotation(90);
+         */
+        params.setJpegQuality(100);
+        params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        params.setExposureCompensation(0);
         camera.setParameters(params);
         try {
             camera.setPreviewDisplay(holder);
