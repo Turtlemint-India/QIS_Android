@@ -7,21 +7,23 @@ image::https://img.shields.io/badge/license-MIT-yellowgreen.svg[]
 This Android application is used to Scan documents and then classify Policies.
 
 # The License and the library used in this application belongs to https://github.com/mayuce/AndroidDocumentScanner. This library provided following features-
-
+----
 1- 1024 x 768 resolution picture from Default camera
 
 2- Black and white filter.
 
 3- Cropping with contours.
+----
 
 ## What's New?
 
+----
 1- Sharpening and Magic Filter.
 
 2- Best Quality Image capturing from the custom camera.
 
 3- Auto Flash and Auto Exposure capabilities.
-
+----
 
 ## Requirements
 
