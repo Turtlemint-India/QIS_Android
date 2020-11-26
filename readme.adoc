@@ -6,6 +6,7 @@ image::https://img.shields.io/badge/license-MIT-yellowgreen.svg[]
 
 This Android application is used to Scan documents and then classify Policies.
 # The License and the library used in this application belongs to https://github.com/mayuce/AndroidDocumentScanner .
+
 ## Requirements
 
 You need to implement openCV to run this application via import module on Android Studio. Use OpenCV library on this repository.
