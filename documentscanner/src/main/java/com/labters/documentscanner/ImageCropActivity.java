@@ -345,7 +345,7 @@ public class ImageCropActivity extends DocumentScanActivity {
         if(!myDir.exists())
             myDir.mkdirs();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "turtledoc_" + timeStamp + ".jpeg";
+        String imageFileName = "turtledoc_" + timeStamp + ".jpg";
         File mypath = new File(myDir, imageFileName);
         FileOutputStream fos = null;
         try {

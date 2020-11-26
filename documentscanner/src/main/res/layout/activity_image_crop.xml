@@ -65,17 +65,16 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:foreground="?attr/actionModeSelectAllDrawable"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_invert_colors" />
+                    android:foreground="@mipmap/magic_foreground"
+                    android:padding="5dp" />
+
             <ImageView
                     android:id="@+id/ivsharp"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:foreground="?attr/actionModeSelectAllDrawable"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_invert_colors" />
+                    android:foreground="@mipmap/sharp"
+                    android:padding="5dp" />
         </LinearLayout>
         <FrameLayout
                 android:id="@+id/frameLayout"
